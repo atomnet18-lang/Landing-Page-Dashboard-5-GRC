@@ -6,119 +6,134 @@
 <title>ศูนย์รวม Dashboard ระบบ GRC | ฝบส. การไฟฟ้านครหลวง</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --navy:#02275E;
-    --navy-deep:#011A40;
+    --navy-deep:#02132E;
     --navy-soft:#0A3470;
-    --gold:#E8A020;
-    --gold-soft:#F4C04E;
-    --ink:#E8EDF6;
-    --ink-dim:#9DB0CE;
-    --line:rgba(157,176,206,.18);
-    --card:rgba(255,255,255,.035);
-    --card-hover:rgba(232,160,32,.06);
-    --good:#3CB371;
-    --warn:#E8A020;
-    --late:#E2574C;
+    --orange:#EC7A1C;          /* MEA emblem orange */
+    --orange-soft:#F4994A;
+    --gold:#F2B23A;
+    --gold-soft:#FAD27A;
+    --ink:#F2F6FF;
+    --ink-dim:#C2D0E6;
+    --line:rgba(210,224,246,.22);
+    --card:rgba(4,18,42,.58);
+    --card-hover:rgba(8,30,66,.72);
+    --good:#46C07F;
+    --warn:#F2B23A;
+    --late:#F2705F;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{
-    font-family:'IBM Plex Sans Thai',sans-serif;
-    background:
-      radial-gradient(1200px 600px at 80% -10%, rgba(232,160,32,.10), transparent 60%),
-      radial-gradient(900px 500px at 0% 0%, rgba(10,52,112,.55), transparent 55%),
-      var(--navy-deep);
+    font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;
     color:var(--ink);
     min-height:100vh;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  /* ---- Fixed solar-sunset photo background + readability scrim ---- */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;
+    background:url("vecteezy_solar-panel-cell-on-dramatic-sunset-sky-background_1235998.jpg") center 30%/cover no-repeat;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;
+    background:
+      radial-gradient(1100px 620px at 82% -8%, rgba(242,178,58,.20), transparent 58%),
+      radial-gradient(900px 560px at 0% 4%, rgba(10,52,112,.45), transparent 55%),
+      linear-gradient(180deg, rgba(2,12,30,.74) 0%, rgba(2,15,38,.86) 46%, rgba(2,12,28,.94) 100%);
   }
   .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
 
-  /* ---- Top status bar (signature) ---- */
+  /* ---- Top status bar ---- */
   .statusbar{
     border-bottom:1px solid var(--line);
-    background:rgba(1,16,38,.6);
-    backdrop-filter:blur(8px);
+    background:rgba(2,14,34,.62);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
     position:sticky;top:0;z-index:20;
   }
-  .statusbar .wrap{display:flex;align-items:center;gap:16px;height:58px;flex-wrap:wrap}
-  .brandmark{display:flex;align-items:center;gap:11px;font-weight:700}
+  .statusbar .wrap{display:flex;align-items:center;gap:16px;height:70px;flex-wrap:wrap}
+  .brandmark{display:flex;align-items:center;gap:13px;font-weight:700;font-size:18px}
   .brandmark .logo{
-    width:30px;height:30px;border-radius:7px;
-    background:linear-gradient(135deg,var(--gold),var(--gold-soft));
-    color:var(--navy-deep);display:grid;place-items:center;
-    font-family:'Sarabun';font-weight:800;font-size:15px;letter-spacing:-1px;
+    width:46px;height:46px;border-radius:50%;
+    background:radial-gradient(circle at 50% 42%, rgba(255,255,255,.96), rgba(245,248,255,.88));
+    display:grid;place-items:center;flex:0 0 auto;
+    box-shadow:0 4px 14px rgba(0,0,0,.34), 0 0 0 1px rgba(236,122,28,.25) inset;
   }
-  .brandmark small{display:block;font-weight:400;font-size:11px;color:var(--ink-dim);letter-spacing:.3px}
-  .live{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-dim)}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(60,179,113,.5);animation:pulse 2.2s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(60,179,113,.45)}70%{box-shadow:0 0 0 9px rgba(60,179,113,0)}100%{box-shadow:0 0 0 0 rgba(60,179,113,0)}}
+  .brandmark .logo img{width:40px;height:40px;object-fit:contain;display:block}
+  .brandmark small{display:block;font-weight:400;font-size:14px;color:var(--ink-dim);letter-spacing:.2px}
+  .live{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-dim)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(70,192,127,.5);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(70,192,127,.45)}70%{box-shadow:0 0 0 9px rgba(70,192,127,0)}100%{box-shadow:0 0 0 0 rgba(70,192,127,0)}}
 
   /* ---- Hero ---- */
-  .hero{padding:64px 0 38px;border-bottom:1px solid var(--line)}
+  .hero{padding:62px 0 40px;border-bottom:1px solid var(--line)}
   .eyebrow{
-    font-size:12.5px;letter-spacing:3px;text-transform:uppercase;
+    font-size:15px;letter-spacing:3px;text-transform:uppercase;
     color:var(--gold);font-weight:600;margin-bottom:18px;
     display:flex;align-items:center;gap:12px;
   }
   .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold)}
   .hero h1{
-    font-family:'Sarabun';font-weight:800;
-    font-size:clamp(30px,5vw,52px);line-height:1.12;letter-spacing:-.5px;
-    max-width:16ch;
+    font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;
+    font-size:clamp(22px,3.5vw,42px);line-height:1.12;letter-spacing:0;
+    white-space:nowrap;text-shadow:0 2px 18px rgba(0,0,0,.45);
   }
   .hero h1 .accent{color:var(--gold)}
-  .hero p{margin-top:20px;max-width:60ch;color:var(--ink-dim);font-size:16px}
+  .hero p{margin-top:18px;max-width:64ch;color:var(--ink-dim);font-size:19px;line-height:1.65;text-shadow:0 1px 10px rgba(0,0,0,.4)}
 
   /* ---- GRC summary strip ---- */
   .gauges{
     display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
-    margin-top:42px;background:var(--line);
+    margin-top:38px;background:var(--line);
     border:1px solid var(--line);border-radius:14px;overflow:hidden;
   }
-  .gauge{background:var(--navy-deep);padding:20px 22px}
-  .gauge .k{font-size:12px;color:var(--ink-dim);letter-spacing:.4px}
-  .gauge .v{font-family:'Sarabun';font-weight:800;font-size:30px;margin-top:6px;line-height:1}
-  .gauge .v small{font-size:14px;font-weight:600;color:var(--ink-dim);margin-left:3px}
-  .gauge .bar{height:4px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:12px;overflow:hidden}
-  .gauge .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold-soft))}
+  .gauge{background:rgba(3,16,38,.66);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:20px 22px}
+  .gauge .k{font-size:15px;color:var(--ink-dim);letter-spacing:.3px}
+  .gauge .v{font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;font-size:34px;margin-top:4px;line-height:1.05}
+  .gauge .v small{font-size:17px;font-weight:600;color:var(--ink-dim);margin-left:4px}
+  .gauge .bar{height:4px;border-radius:99px;background:rgba(255,255,255,.12);margin-top:12px;overflow:hidden}
+  .gauge .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--orange),var(--gold-soft))}
 
   /* ---- Pillars ---- */
-  .section{padding:56px 0}
-  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
-  .sec-head h2{font-family:'Sarabun';font-weight:800;font-size:22px}
-  .sec-head span{font-size:13px;color:var(--ink-dim)}
+  .section{padding:54px 0}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+  .sec-head h2{font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;font-size:26px;line-height:1.2;text-shadow:0 1px 12px rgba(0,0,0,.4)}
+  .sec-head span{font-size:16px;color:var(--ink-dim)}
 
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;align-items:stretch}
   .card{
-    position:relative;display:block;text-decoration:none;color:inherit;
+    position:relative;display:flex;flex-direction:column;text-decoration:none;color:inherit;
     background:var(--card);border:1px solid var(--line);border-radius:16px;
     padding:26px 26px 24px;overflow:hidden;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-shadow:0 10px 30px rgba(0,0,0,.28);
     transition:transform .22s ease,border-color .22s ease,background .22s ease;
   }
+  .card .go{margin-top:auto}
   .card::before{
     content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
-    background:var(--accent,var(--gold));opacity:.85;
+    background:var(--accent,var(--orange));opacity:.9;
   }
-  .card:hover{transform:translateY(-4px);border-color:rgba(232,160,32,.4);background:var(--card-hover)}
+  .card:hover{transform:translateY(-4px);border-color:rgba(242,178,58,.5);background:var(--card-hover)}
   .card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   .card .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .pillar{font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--accent,var(--gold));font-weight:600}
+  .pillar{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent,var(--orange));font-weight:600}
   .std{
-    font-size:11px;color:var(--ink-dim);border:1px solid var(--line);
-    padding:3px 9px;border-radius:99px;white-space:nowrap;
+    font-size:14px;color:var(--ink-dim);border:1px solid var(--line);
+    padding:2px 11px;border-radius:99px;white-space:nowrap;background:rgba(0,0,0,.18);
   }
-  .card h3{font-family:'Sarabun';font-weight:800;font-size:19px;margin:14px 0 8px;line-height:1.3}
-  .card p{font-size:13.5px;color:var(--ink-dim);min-height:40px}
-  .card .meta{display:flex;align-items:center;gap:14px;margin-top:18px;font-size:12.5px;color:var(--ink-dim)}
-  .card .meta b{color:var(--ink);font-family:'Sarabun';font-weight:800;font-size:15px}
+  .card h3{font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;font-size:24px;margin:13px 0 7px;line-height:1.25}
+  .card p{font-size:17px;color:var(--ink-dim);line-height:1.55;min-height:52px}
+  .card .meta{display:flex;align-items:center;gap:16px;margin-top:18px;font-size:16px;color:var(--ink-dim)}
+  .card .meta b{color:var(--ink);font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;font-size:19px}
   .card .go{
     margin-top:18px;display:inline-flex;align-items:center;gap:7px;
-    font-size:13px;font-weight:600;color:var(--gold);
+    font-size:16px;font-weight:600;color:var(--gold);
   }
   .card .go svg{transition:transform .2s ease}
   .card:hover .go svg{transform:translateX(4px)}
@@ -131,9 +146,10 @@
     .grid{grid-template-columns:1fr}
     .card.wide{grid-template-columns:1fr}
     .card.wide .right{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:22px}
+    .hero h1{white-space:normal}
   }
 
-  footer{border-top:1px solid var(--line);padding:30px 0 48px;color:var(--ink-dim);font-size:12.5px}
+  footer{border-top:1px solid var(--line);padding:30px 0 48px;color:var(--ink-dim);font-size:15px;line-height:1.6;background:rgba(2,12,28,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
   footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
   footer a{color:var(--gold-soft);text-decoration:none}
 
@@ -147,7 +163,7 @@
 <div class="statusbar">
   <div class="wrap">
     <div class="brandmark">
-      <span class="logo">M</span>
+      <span class="logo"><img src="logo3.8549861c.png" alt="ตราสัญลักษณ์การไฟฟ้านครหลวง"></span>
       <div>MEA · ฝบส.
         <small>ฝ่ายบริหารความเสี่ยงองค์กร</small>
       </div>
@@ -159,9 +175,11 @@
 <header class="hero">
   <div class="wrap">
     <div class="eyebrow">GRC Command Center</div>
-    <h1>ศูนย์รวมการติดตาม<br><span class="accent">ระบบ GRC</span> ของการไฟฟ้านครหลวง</h1>
+    <h1>ศูนย์รวมการติดตาม <span class="accent">ระบบ GRC</span> ของการไฟฟ้านครหลวง</h1>
     <p>รวมศูนย์ Dashboard การกำกับดูแล ความเสี่ยง การปฏิบัติตามกฎระเบียบ การควบคุมภายใน และความต่อเนื่องทางธุรกิจ ไว้ในที่เดียว เพื่อให้ผู้บริหารและผู้ปฏิบัติงานเห็นภาพรวมความก้าวหน้าทั้งระบบ แล้วเจาะลงรายละเอียดในแต่ละด้านได้ทันที</p>
+  </div>
 
+  <div class="wrap">
     <div class="gauges">
       <div class="gauge">
         <div class="k">ด้านที่ติดตาม</div>
@@ -202,9 +220,9 @@
         <p>ติดตามความเสี่ยงระดับองค์กร แผนจัดการความเสี่ยง และสถานะการควบคุม — หัวใจของระบบที่เชื่อมโยงทุกด้านเข้าด้วยกัน</p>
       </div>
       <div class="right">
-        <div class="card .meta" style="display:flex;gap:16px;font-size:12.5px;color:var(--ink-dim)">
-          <div>ขอบเขต<br><b style="color:var(--ink);font-family:'Sarabun';font-weight:800;font-size:15px">ทั้งองค์กร</b></div>
-          <div>กรอบ<br><b style="color:var(--ink);font-family:'Sarabun';font-weight:800;font-size:15px">COSO ERM</b></div>
+        <div class="meta" style="display:flex;gap:18px;font-size:16px;color:var(--ink-dim)">
+          <div>ขอบเขต<br><b>ทั้งองค์กร</b></div>
+          <div>กรอบ<br><b>COSO ERM</b></div>
         </div>
         <span class="go">เปิด Dashboard
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
