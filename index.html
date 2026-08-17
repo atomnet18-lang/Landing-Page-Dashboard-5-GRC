@@ -4,11 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ศูนย์รวม Dashboard ระบบ GRC | ฝบส. การไฟฟ้านครหลวง</title>
+<script>
+  /* Set theme before first paint to avoid a flash of the wrong appearance */
+  (function(){
+    try{
+      var t = localStorage.getItem('grc-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    }catch(e){ document.documentElement.setAttribute('data-theme','dark'); }
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-  :root{
+  :root,[data-theme="dark"]{
     --navy:#02275E;
     --navy-deep:#02132E;
     --navy-soft:#0A3470;
@@ -18,13 +27,45 @@
     --gold-soft:#FAD27A;
     --ink:#F2F6FF;
     --ink-dim:#C2D0E6;
-    --line:rgba(210,224,246,.22);
-    --card:rgba(4,18,42,.58);
-    --card-hover:rgba(8,30,66,.72);
     --good:#46C07F;
     --warn:#F2B23A;
     --late:#F2705F;
+
+    /* glassmorphism tokens — dark surface */
+    --glass-bg:rgba(255,255,255,.10);
+    --glass-bg-strong:rgba(255,255,255,.16);
+    --glass-border:rgba(255,255,255,.25);
+    --glass-blur:18px;
+    --chip-bg:rgba(0,0,0,.20);
+    --track-bg:rgba(255,255,255,.14);
+    --solid-fallback:#0B1830;
+    --shadow:0 22px 54px rgba(0,0,0,.38), 0 3px 10px rgba(0,0,0,.28);
+    --text-shadow:0 2px 18px rgba(0,0,0,.45);
+    --scrim:
+      radial-gradient(1100px 620px at 82% -8%, rgba(242,178,58,.20), transparent 58%),
+      radial-gradient(900px 560px at 0% 4%, rgba(10,52,112,.45), transparent 55%),
+      linear-gradient(180deg, rgba(2,12,30,.66) 0%, rgba(2,15,38,.80) 46%, rgba(2,12,28,.90) 100%);
   }
+  [data-theme="light"]{
+    --ink:#0B1B33;
+    --ink-dim:#3E5573;
+
+    /* glassmorphism tokens — light surface (same photo, lighter glass) */
+    --glass-bg:rgba(255,255,255,.40);
+    --glass-bg-strong:rgba(255,255,255,.58);
+    --glass-border:rgba(255,255,255,.65);
+    --glass-blur:18px;
+    --chip-bg:rgba(255,255,255,.40);
+    --track-bg:rgba(11,27,51,.12);
+    --solid-fallback:#EAF1FF;
+    --shadow:0 22px 54px rgba(10,20,40,.20), 0 3px 10px rgba(10,20,40,.14);
+    --text-shadow:0 1px 14px rgba(255,255,255,.55);
+    --scrim:
+      radial-gradient(1100px 620px at 82% -8%, rgba(242,178,58,.22), transparent 58%),
+      radial-gradient(900px 560px at 0% 4%, rgba(10,52,112,.16), transparent 55%),
+      linear-gradient(180deg, rgba(255,255,255,.38) 0%, rgba(226,236,252,.52) 46%, rgba(204,219,244,.64) 100%);
+  }
+
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{
@@ -34,27 +75,54 @@
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
     position:relative;
+    transition:color .3s ease;
   }
-  /* ---- Fixed solar-sunset photo background + readability scrim ---- */
+  /* ---- Fixed solar-sunset photo background (same image, both themes) + color-bleed scrim ---- */
   body::before{
     content:"";position:fixed;inset:0;z-index:-2;
     background:url("vecteezy_solar-panel-cell-on-dramatic-sunset-sky-background_1235998.jpg") center 30%/cover no-repeat;
   }
   body::after{
     content:"";position:fixed;inset:0;z-index:-1;
-    background:
-      radial-gradient(1100px 620px at 82% -8%, rgba(242,178,58,.20), transparent 58%),
-      radial-gradient(900px 560px at 0% 4%, rgba(10,52,112,.45), transparent 55%),
-      linear-gradient(180deg, rgba(2,12,30,.74) 0%, rgba(2,15,38,.86) 46%, rgba(2,12,28,.94) 100%);
+    background:var(--scrim);
+    transition:background .35s ease;
   }
   .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
 
+  /* ================= Glassmorphism surface — shared recipe =================
+     Every panel (nav bar, gauges, content cards, footer, toggle) uses the same
+     decorative glass skin: translucent fill + strong blur + thin bright edge +
+     soft wide shadow for floating depth. The vivid backdrop (photo + color
+     gradients) is what bleeds through each panel. */
+  .statusbar,
+  .gauge,
+  .card,
+  footer,
+  .theme-toggle{
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(140%);
+    backdrop-filter:blur(var(--glass-blur)) saturate(140%);
+    box-shadow:var(--shadow);
+    transition:background .3s ease,border-color .3s ease,box-shadow .3s ease,transform .22s ease;
+  }
+  /* No backdrop-filter support → solid, still-readable fallback */
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .statusbar,.gauge,.card,footer,.theme-toggle{ background:var(--solid-fallback); }
+  }
+  /* Reduced transparency preference → drop blur/translucency entirely */
+  @media (prefers-reduced-transparency:reduce){
+    .statusbar,.gauge,.card,footer,.theme-toggle{
+      -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+      background:var(--solid-fallback)!important;
+    }
+  }
+
   /* ---- Top status bar ---- */
   .statusbar{
-    border-bottom:1px solid var(--line);
-    background:rgba(2,14,34,.62);
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-left:none;border-right:none;border-top:none;
     position:sticky;top:0;z-index:20;
+    box-shadow:0 8px 30px rgba(0,0,0,.22);
   }
   .statusbar .wrap{display:flex;align-items:center;gap:16px;height:70px;flex-wrap:wrap}
   .brandmark{display:flex;align-items:center;gap:13px;font-weight:700;font-size:18px}
@@ -66,12 +134,27 @@
   }
   .brandmark .logo img{width:40px;height:40px;object-fit:contain;display:block}
   .brandmark small{display:block;font-weight:400;font-size:14px;color:var(--ink-dim);letter-spacing:.2px}
-  .live{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-dim)}
+  .live{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:15px;color:var(--ink-dim)}
   .dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(70,192,127,.5);animation:pulse 2.2s infinite}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(70,192,127,.45)}70%{box-shadow:0 0 0 9px rgba(70,192,127,0)}100%{box-shadow:0 0 0 0 rgba(70,192,127,0)}}
 
+  /* ---- Dark / light appearance toggle (macOS-style glyph) ---- */
+  .theme-toggle{
+    width:36px;height:36px;border-radius:50%;flex:0 0 auto;
+    display:grid;place-items:center;color:var(--ink);cursor:pointer;
+    -webkit-appearance:none;appearance:none;
+  }
+  .theme-toggle:hover{transform:translateY(-1px) scale(1.05);background:var(--glass-bg-strong)}
+  .theme-toggle:active{transform:translateY(0) scale(.97)}
+  .theme-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  .theme-toggle svg{width:18px;height:18px;display:block}
+  .theme-toggle .icon-moon{display:block}
+  .theme-toggle .icon-sun{display:none}
+  [data-theme="light"] .theme-toggle .icon-moon{display:none}
+  [data-theme="light"] .theme-toggle .icon-sun{display:block}
+
   /* ---- Hero ---- */
-  .hero{padding:62px 0 40px;border-bottom:1px solid var(--line)}
+  .hero{padding:62px 0 40px;border-bottom:1px solid var(--glass-border)}
   .eyebrow{
     font-size:15px;letter-spacing:3px;text-transform:uppercase;
     color:var(--gold);font-weight:600;margin-bottom:18px;
@@ -81,51 +164,48 @@
   .hero h1{
     font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;
     font-size:clamp(28px,3.2vw,40px);line-height:1.22;letter-spacing:0;max-width:780px;
-    text-shadow:0 2px 18px rgba(0,0,0,.45);
+    text-shadow:var(--text-shadow);
   }
   .hero h1 .accent{color:var(--gold)}
-  .hero p{margin-top:18px;max-width:64ch;color:var(--ink-dim);font-size:19px;line-height:1.65;text-shadow:0 1px 10px rgba(0,0,0,.4)}
+  .hero p{margin-top:18px;max-width:64ch;color:var(--ink-dim);font-size:19px;line-height:1.65;text-shadow:var(--text-shadow)}
 
-  /* ---- GRC summary strip ---- */
+  /* ---- GRC summary strip — each gauge is its own floating glass panel ---- */
   .gauges{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
-    margin-top:38px;background:var(--line);
-    border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+    margin-top:38px;
   }
-  .gauge{background:rgba(3,16,38,.66);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:20px 22px}
+  .gauge{padding:20px 22px;border-radius:14px}
+  .gauge:hover{transform:translateY(-3px);background:var(--glass-bg-strong)}
   .gauge .k{font-size:15px;color:var(--ink-dim);letter-spacing:.3px}
   .gauge .v{font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;font-size:34px;margin-top:4px;line-height:1.05}
   .gauge .v small{font-size:17px;font-weight:600;color:var(--ink-dim);margin-left:4px}
-  .gauge .bar{height:4px;border-radius:99px;background:rgba(255,255,255,.12);margin-top:12px;overflow:hidden}
+  .gauge .bar{height:4px;border-radius:99px;background:var(--track-bg);margin-top:12px;overflow:hidden}
   .gauge .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--orange),var(--gold-soft))}
 
   /* ---- Pillars ---- */
   .section{padding:54px 0}
   .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:26px;flex-wrap:wrap}
-  .sec-head h2{font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;font-size:26px;line-height:1.2;text-shadow:0 1px 12px rgba(0,0,0,.4)}
+  .sec-head h2{font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;font-size:26px;line-height:1.2;text-shadow:var(--text-shadow)}
   .sec-head span{font-size:16px;color:var(--ink-dim)}
 
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;align-items:stretch}
   .card{
     position:relative;display:flex;flex-direction:column;text-decoration:none;color:inherit;
-    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    border-radius:16px;
     padding:26px 26px 24px;overflow:hidden;
-    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    box-shadow:0 10px 30px rgba(0,0,0,.28);
-    transition:transform .22s ease,border-color .22s ease,background .22s ease;
   }
   .card .go{margin-top:auto}
   .card::before{
     content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
     background:var(--accent,var(--orange));opacity:.9;
   }
-  .card:hover{transform:translateY(-4px);border-color:rgba(242,178,58,.5);background:var(--card-hover)}
+  .card:hover{transform:translateY(-4px);border-color:var(--gold);background:var(--glass-bg-strong)}
   .card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   .card .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .pillar{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent,var(--orange));font-weight:600}
   .std{
-    font-size:14px;color:var(--ink-dim);border:1px solid var(--line);
-    padding:2px 11px;border-radius:99px;white-space:nowrap;background:rgba(0,0,0,.18);
+    font-size:14px;color:var(--ink-dim);border:1px solid var(--glass-border);
+    padding:2px 11px;border-radius:99px;white-space:nowrap;background:var(--chip-bg);
   }
   .card h3{font-family:'TH Sarabun PSK','TH SarabunPSK','Sarabun',sans-serif;font-weight:800;font-size:24px;margin:13px 0 7px;line-height:1.25}
   .card p{font-size:17px;color:var(--ink-dim);line-height:1.55;min-height:52px}
@@ -140,16 +220,16 @@
 
   /* full-width feature card for risk core */
   .card.wide{grid-column:1 / -1;display:grid;grid-template-columns:1.4fr 1fr;gap:30px;align-items:center}
-  .card.wide .right{border-left:1px solid var(--line);padding-left:30px}
+  .card.wide .right{border-left:1px solid var(--glass-border);padding-left:30px}
   @media(max-width:760px){
     .gauges{grid-template-columns:repeat(2,1fr)}
     .grid{grid-template-columns:1fr}
     .card.wide{grid-template-columns:1fr}
-    .card.wide .right{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:22px}
+    .card.wide .right{border-left:none;border-top:1px solid var(--glass-border);padding-left:0;padding-top:22px}
     .hero h1{white-space:normal}
   }
 
-  footer{border-top:1px solid var(--line);padding:30px 0 48px;color:var(--ink-dim);font-size:15px;line-height:1.6;background:rgba(2,12,28,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  footer{border-top:none;padding:30px 0 48px;color:var(--ink-dim);font-size:15px;line-height:1.6}
   footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
   footer a{color:var(--gold-soft);text-decoration:none}
 
@@ -164,16 +244,35 @@
   <div class="wrap">
     <div class="brandmark">
       <span class="logo"><img src="logo3.8549861c.png" alt="ตราสัญลักษณ์การไฟฟ้านครหลวง"></span>
-      <div>การไฟฟ้านครหลวง (MEA)
+      <div>MEA · ฝบส.
+        <small>ฝ่ายบริหารความเสี่ยงองค์กร</small>
       </div>
     </div>
-    <div class="live"><span class="dot"></span> ระบบติดตาม GRC · ปีงบประมาณ 2569</div>
+    <div class="live">
+      <span><span class="dot"></span> ระบบติดตาม GRC · ปีงบประมาณ 2569</span>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="สลับโหมดสว่าง/มืด" aria-pressed="false">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a.6.6 0 0 0-.75-.74A10 10 0 1 0 21.24 15.25a.6.6 0 0 0-.74-.75Z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"/>
+          <line x1="12" y1="1.5" x2="12" y2="4"/>
+          <line x1="12" y1="20" x2="12" y2="22.5"/>
+          <line x1="1.5" y1="12" x2="4" y2="12"/>
+          <line x1="20" y1="12" x2="22.5" y2="12"/>
+          <line x1="4.2" y1="4.2" x2="6" y2="6"/>
+          <line x1="18" y1="18" x2="19.8" y2="19.8"/>
+          <line x1="4.2" y1="19.8" x2="6" y2="18"/>
+          <line x1="18" y1="6" x2="19.8" y2="4.2"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
 
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow">ฝ่ายบริหารความเสี่ยงองค์กร</div>
+    <div class="eyebrow">GRC Command Center</div>
     <h1>ระบบติดตามรายงานผลการดำเนินงานด้าน <span class="accent">GRC</span><br>ของการไฟฟ้านครหลวง</h1>
     <p>ติดตามความคืบหน้าแผนงาน การกำกับดูแล ความเสี่ยง การปฏิบัติตามกฎระเบียบ การควบคุมภายใน และความต่อเนื่องทางธุรกิจ ไว้ในที่เดียว เพื่อให้ผู้บริหารและผู้ปฏิบัติงานเห็นภาพรวมความก้าวหน้าตามแผนการปฏิบัติงาน</p>
   </div>
@@ -295,6 +394,22 @@
     <div>ปีงบประมาณ 2569 · รองผู้ว่าการยุทธศาสตร์องค์กรและความยั่งยืน</div>
   </div>
 </footer>
+
+<script>
+  (function(){
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    if(!btn) return;
+    var current = root.getAttribute('data-theme') || 'dark';
+    btn.setAttribute('aria-pressed', String(current === 'light'));
+    btn.addEventListener('click', function(){
+      current = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', current);
+      btn.setAttribute('aria-pressed', String(current === 'light'));
+      try{ localStorage.setItem('grc-theme', current); }catch(e){}
+    });
+  })();
+</script>
 
 </body>
 </html>
